@@ -5,29 +5,56 @@ import sharp from "sharp";
 const inputDir = "./photos";
 const outputDir = "./optimized";
 
-// Create output directory if not exist
-if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+// Create output directory if it doesn't exist
+if (!fs.existsSync(outputDir)) {
+  fs.mkdirSync(outputDir, { recursive: true });
+}
 
-const files = fs.readdirSync(inputDir);
+// Recursively get JPG files
+function getJpgFiles(dir) {
+  let results = [];
+  const list = fs.readdirSync(dir);
+
+  list.forEach((file) => {
+    const filePath = path.join(dir, file);
+    const stat = fs.statSync(filePath);
+
+    if (stat && stat.isDirectory()) {
+      results = results.concat(getJpgFiles(filePath));
+    } else if (/\.(jpg|jpeg)$/i.test(file)) {
+      results.push(filePath);
+    }
+  });
+
+  return results;
+}
 
 (async () => {
-  for (const file of files) {
-    if (!/\.(jpg|jpeg|png)$/i.test(file)) continue;
+  const files = getJpgFiles(inputDir);
 
-    const inputPath = path.join(inputDir, file);
-    const outputPath = path.join(outputDir, `${path.parse(file).name}.webp`);
+  for (const file of files) {
+    const relativePath = path.relative(inputDir, file);
+    const outputPath = path.join(
+      outputDir,
+      relativePath.replace(/\.(jpg|jpeg)$/i, ".webp")
+    );
+
+    const outputFolder = path.dirname(outputPath);
+    if (!fs.existsSync(outputFolder)) {
+      fs.mkdirSync(outputFolder, { recursive: true });
+    }
 
     try {
-      await sharp(inputPath)
-        .resize({ width: 1920 })
+      await sharp(file)
+        .resize({ width: 1920, withoutEnlargement: true })
         .webp({ quality: 85 })
         .toFile(outputPath);
-      console.log(`✅ Optimized: ${file}`);
+
+      console.log(`✅ Optimized: ${relativePath}`);
     } catch (err) {
-      console.error(`❌ Failed: ${file}`, err);
+      console.error(`❌ Failed: ${relativePath}`, err);
     }
   }
 
-  console.log("\n🎉 All images optimized successfully!");
+  console.log("\n🎉 All JPG images optimized successfully!");
 })();
-

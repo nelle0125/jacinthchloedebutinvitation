@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MAIRA XVIII | Debut Gallery</title>
+  <title> JACINTH XVIII | DEBUT</title>
 
   <link rel="stylesheet" href="styles.css" />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet" />
@@ -14,10 +14,10 @@
   <div class="container nav-inner">
     <div class="brand">
       <a href="index.html" class="brand-link">
-        <img src="photos/logo.webp" alt="logo" class="logo" />
+        <img src="photos/logo.jpg" alt="logo" class="logo" />
         <div class="brand-text">
-          <span class="event-name">MAIRA XVIII</span>
-          <small class="event-sub">November 22, 2025 · 5:00 PM</small>
+          <span class="event-name">JACINTH XVIII</span>
+          <small class="event-sub">March 21, 2026 · 4:00 PM</small>
         </div>
       </a>
     </div>
@@ -39,7 +39,7 @@
   <!-- ===== HEADER ===== -->
   <header data-aos="fade-up">
     <h1>Pre Debut Photo Highlights</h1>
-    <p>Captured memories from Maira's Pre Debut Shoot ✨</p>
+    <p>Captured memories from Jacinth's Pre Debut Shoot ✨</p>
   </header>
 
   <!-- ===== GALLERY SECTION ===== -->
@@ -58,94 +58,92 @@
 
   <!-- ===== SCRIPT ===== -->
   <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const galleryGrid = document.getElementById('galleryGrid');
-    const loadMoreBtn = document.getElementById('loadMoreBtn');
-    const totalPhotos = 120; // number of optimized images
-    const batchSize = 24;
-    let loadedCount = 0;
+document.addEventListener('DOMContentLoaded', () => {
+  const galleryGrid = document.getElementById('galleryGrid');
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
 
-    // Create Lightbox
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    const lightboxClose = document.getElementById('closeLightbox');
+  const totalPhotos = 114; // total optimized photos
+  const batchSize = 24;
+  let loadedCount = 0;
 
-    // Lazy Loading
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const picture = entry.target;
-          const img = picture.querySelector('img');
-          img.src = img.dataset.src;
-          observer.unobserve(picture);
-        }
-      });
-    }, { rootMargin: '200px' });
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxClose = document.getElementById('closeLightbox');
 
-    // Load Next Batch
-    function loadBatch() {
-      const nextCount = Math.min(loadedCount + batchSize, totalPhotos);
-      for (let i = loadedCount + 1; i <= nextCount; i++) {
-        const div = document.createElement('div');
-        div.className = 'gallery-item';
-        div.dataset.src = `photos/${i}.webp`;
-
-        const picture = document.createElement('picture');
-        const source = document.createElement('source');
-        source.srcset = `photos/${i}.webp`;
-        source.type = 'image/webp';
-
-        const img = document.createElement('img');
-        img.dataset.src = `photos/${i}.jpg`; // fallback
-        img.alt = `Photo ${i}`;
-        img.loading = 'lazy';
-        img.decoding = 'async';
-
-        picture.appendChild(source);
-        picture.appendChild(img);
-
-        const caption = document.createElement('div');
-        caption.className = 'caption';
-        caption.textContent = `Photo ${i}`;
-
-        div.appendChild(picture);
-        div.appendChild(caption);
-        galleryGrid.appendChild(div);
-
-        observer.observe(picture);
+  // Lazy Loading Observer
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.src = img.dataset.src;
+        observer.unobserve(img);
       }
-      loadedCount = nextCount;
+    });
+  }, { rootMargin: '200px' });
 
-      if (loadedCount >= totalPhotos) {
-        loadMoreBtn.style.display = 'none';
-      }
+  function loadBatch() {
+
+    const nextCount = Math.min(loadedCount + batchSize, totalPhotos);
+
+    for (let i = loadedCount + 1; i <= nextCount; i++) {
+
+      const filename = `optimized/JACINTH${i}.webp`;
+
+      const div = document.createElement('div');
+      div.className = 'gallery-item';
+      div.dataset.src = filename;
+
+      const img = document.createElement('img');
+      img.dataset.src = filename;
+      img.alt = `Photo ${i}`;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+
+      const caption = document.createElement('div');
+      caption.className = 'caption';
+      caption.textContent = `Photo ${i}`;
+
+      div.appendChild(img);
+      div.appendChild(caption);
+
+      galleryGrid.appendChild(div);
+
+      observer.observe(img);
     }
 
-    // Lightbox Controls
-    document.addEventListener('click', e => {
-      const item = e.target.closest('.gallery-item');
-      if (item) {
-        lightboxImg.src = item.dataset.src;
-        lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden';
-      }
-    });
+    loadedCount = nextCount;
 
-    lightboxClose.addEventListener('click', () => {
+    if (loadedCount >= totalPhotos) {
+      loadMoreBtn.style.display = 'none';
+    }
+  }
+
+  // Lightbox
+  document.addEventListener('click', e => {
+    const item = e.target.closest('.gallery-item');
+    if (item) {
+      lightboxImg.src = item.dataset.src;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  });
+
+  lightboxClose.addEventListener('click', () => {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) {
       lightbox.classList.remove('active');
       document.body.style.overflow = '';
-    });
-
-    lightbox.addEventListener('click', e => {
-      if (e.target === lightbox) {
-        lightbox.classList.remove('active');
-        document.body.style.overflow = '';
-      }
-    });
-
-    loadMoreBtn.addEventListener('click', loadBatch);
-    loadBatch();
+    }
   });
-  </script>
+
+  loadMoreBtn.addEventListener('click', loadBatch);
+
+  loadBatch();
+});
+</script>
 </body>
 </html>
