@@ -2,5 +2,8 @@
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 *.png filter=lfs diff=lfs merge=lfs -text
 *.jpg filter=lfs diff=lfs merge=lfs -text
+<<<<<<< HEAD
 *.gif filter=lfs diff=lfs merge=lfs -text
 video/* filter=lfs diff=lfs merge=lfs -text
+=======
+>>>>>>> b88aab3e64cb6c9977af60c62977f859208fe919
